@@ -1,7 +1,14 @@
 const db = require("../data/dbConfig");
 
-function get() {
-  return db("accounts");
+function get(options) {
+  const {
+    limit: limit = 10,
+    sortby: sortby = "id",
+    sortdir: sortdir = "asc"
+  } = options;
+  return db("accounts")
+    .orderBy(sortby, sortdir)
+    .limit(limit);
 }
 
 function getById(id) {

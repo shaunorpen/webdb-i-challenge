@@ -6,9 +6,10 @@ const handleError = error => (_req, res) => {
   res.status(500).json("Something went wrong: " + error.message);
 };
 
-router.get("/", (_req, res) => {
+router.get("/", (req, res) => {
+  const options = req.query;
   accounts
-    .get()
+    .get(options)
     .then(data => {
       res.status(200).json(data);
     })
