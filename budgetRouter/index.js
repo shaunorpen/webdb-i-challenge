@@ -1,62 +1,57 @@
 const express = require("express");
-const db = require("../data/dbConfig");
-
+const accounts = require("./helpers");
 const router = express.Router();
 
+const handleError = error => () => {
+  res.status(500).json("Something went wrong: " + error.message);
+};
+
 router.get("/", (req, res) => {
-  db("accounts")
+  accounts
+    .get()
     .then(data => {
       res.status(200).json(data);
     })
-    .catch(error => {
-      res.status(500).json("Something went wrong: " + error.message);
-    });
+    .catch(handleError);
 });
 
 router.get("/:id", (req, res) => {
-  db("accounts")
-    .where({ id: req.params.id })
+  accounts
+    .getById(req.params.id)
     .then(data => {
       res.status(200).json(data[0]);
     })
-    .catch(error => {
-      res.status(500).json("Something went wrong: " + error.message);
-    });
+    .catch(handleError);
 });
 
 router.post("/", (req, res) => {
-  db("accounts")
-    .insert({ name: req.body.name, budget: req.body.budget })
+  accounts
+    .createAccount({
+      name: req.body.name,
+      budget: req.body.budget
+    })
     .then(data => {
       res.status(201).json(data[0]);
     })
-    .catch(error => {
-      res.status(500).json("Something went wrong: " + error.message);
-    });
+    .catch(handleError);
 });
 
 router.put("/:id", (req, res) => {
-  db("accounts")
-    .where({ id: req.params.id })
-    .update(req.body)
+  accounts
+    .updateAccount(req.params.id, req.body)
     .then(data => {
       res.status(200).json(data);
     })
-    .catch(error => {
-      res.status(500).json("Something went wrong: " + error.message);
-    });
+    .catch(handleError);
 });
 
 router.delete("/:id", (req, res) => {
-  db("accounts")
-    .where({ id: req.params.id })
-    .del()
+  accounts
+    .deleteAccount(req.params.id)
     .then(data => {
       res.status(200).json(data);
     })
-    .catch(error => {
-      res.status(500).json("Something went wrong: " + error.message);
-    });
+    .catch(handleError);
 });
 
 module.exports = router;
